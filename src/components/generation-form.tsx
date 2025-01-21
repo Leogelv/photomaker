@@ -5,6 +5,37 @@ import { FileUpload } from './file-upload';
 import { cn } from '@/lib/utils';
 import type { Category, GenerationResult } from '@/types';
 
+const POSES = [
+  {
+    id: 'headshot',
+    name: 'Портрет',
+    description: 'Классический портрет крупным планом',
+    prompt: 'professional headshot photo, head and shoulders, looking at camera',
+    icon: 'ph:user-circle-duotone'
+  },
+  {
+    id: 'business',
+    name: 'Деловой',
+    description: 'Деловой портрет в полный рост',
+    prompt: 'full body business photo, standing, professional pose, office environment',
+    icon: 'ph:briefcase-duotone'
+  },
+  {
+    id: 'casual',
+    name: 'Повседневный',
+    description: 'Непринужденная поза в городской среде',
+    prompt: 'casual lifestyle photo, relaxed pose, urban environment',
+    icon: 'ph:coffee-duotone'
+  },
+  {
+    id: 'creative',
+    name: 'Креативный',
+    description: 'Творческая поза с интересным ракурсом',
+    prompt: 'creative portrait, artistic pose, interesting angle',
+    icon: 'ph:paint-brush-duotone'
+  }
+];
+
 interface GenerationFormProps {
   category: Category;
   onGenerate: (data: GenerationResult) => void;
@@ -13,6 +44,7 @@ interface GenerationFormProps {
 export function GenerationForm({ category, onGenerate }: GenerationFormProps) {
   const [prompt, setPrompt] = useState(category.presets[0].prompt);
   const [file, setFile] = useState<File | null>(null);
+  const [selectedPose, setSelectedPose] = useState(POSES[0]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,6 +56,7 @@ export function GenerationForm({ category, onGenerate }: GenerationFormProps) {
       const formData = new FormData();
       formData.append('prompt', prompt);
       formData.append('file', file);
+      formData.append('pose', selectedPose.prompt);
 
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -76,6 +109,63 @@ export function GenerationForm({ category, onGenerate }: GenerationFormProps) {
 
         {/* Правая колонка - Настройки */}
         <div className="space-y-8 p-8">
+          {/* Позы */}
+          <div className="space-y-3">
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground/80">
+              <Icon 
+                icon="ph:person-simple-walk-duotone" 
+                className="h-4 w-4" 
+              />
+              Выбери позу
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              {POSES.map((pose) => (
+                <motion.button
+                  key={pose.id}
+                  type="button"
+                  onClick={() => setSelectedPose(pose)}
+                  className={cn(
+                    "group relative overflow-hidden rounded-lg border p-4 text-left",
+                    "transition-colors duration-300",
+                    selectedPose.id === pose.id
+                      ? "border-primary/50 bg-primary/5"
+                      : "border-white/[0.08] bg-background hover:border-primary/20 hover:bg-primary/5"
+                  )}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={cn(
+                      "flex h-10 w-10 items-center justify-center rounded-lg",
+                      "transition-colors duration-300",
+                      selectedPose.id === pose.id
+                        ? "bg-primary/20"
+                        : "bg-white/[0.08] group-hover:bg-primary/10"
+                    )}>
+                      <Icon 
+                        icon={pose.icon} 
+                        className={cn(
+                          "h-5 w-5 transition-colors duration-300",
+                          selectedPose.id === pose.id
+                            ? "text-primary"
+                            : "text-foreground/60 group-hover:text-primary"
+                        )}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-medium text-foreground">
+                        {pose.name}
+                      </p>
+                      <p className="text-sm text-foreground/60">
+                        {pose.description}
+                      </p>
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
+          </div>
+
           {/* Описание */}
           <div className="space-y-3">
             <label className="flex items-center gap-2 text-sm font-medium text-foreground/80">

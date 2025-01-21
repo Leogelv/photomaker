@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useAnimation } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { Icon } from '@iconify/react';
 import { cn } from '@/lib/utils';
 
@@ -65,16 +65,18 @@ export function FileUpload({ file, onFileSelect }: FileUploadProps) {
   };
 
   return (
-    <div className="relative group">
+    <div className="relative group h-full">
       {/* Внешнее свечение */}
-      <div className="absolute -inset-[30px] bg-gradient-to-r from-primary/30 via-secondary/30 to-accent/30 rounded-[30px] opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-500" />
+      <div className="absolute -inset-[30px] bg-gradient-to-r from-primary/30 via-secondary/30 to-accent/30 rounded-[30px] opacity-20 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
       
       {/* Анимированная рамка */}
-      <div className="absolute -inset-[2px] bg-gradient-border [--angle:45deg] rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-           style={{ animation: "gradient-rotate 3s linear infinite" }} />
+      <div 
+        className="absolute -inset-[2px] bg-gradient-border [--angle:45deg] rounded-xl opacity-20 transition-opacity duration-500 group-hover:opacity-100"
+        style={{ animation: "gradient-rotate 8s linear infinite" }} 
+      />
       
       {/* Внутреннее свечение */}
-      <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
+      <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-xl opacity-20 blur-sm transition-opacity duration-500 group-hover:opacity-100" />
 
       {/* Основной контейнер */}
       <div 
@@ -84,7 +86,7 @@ export function FileUpload({ file, onFileSelect }: FileUploadProps) {
         onDragOver={handleDrag}
         onDrop={handleDrop}
         className={cn(
-          "relative flex aspect-video cursor-pointer flex-col items-center justify-center gap-4",
+          "relative flex h-full cursor-pointer flex-col items-center justify-center gap-4",
           "rounded-xl bg-background/80 backdrop-blur-sm",
           "transition-all duration-300",
           dragActive && "bg-primary/5",
@@ -105,7 +107,7 @@ export function FileUpload({ file, onFileSelect }: FileUploadProps) {
             </div>
           </div>
         ) : (
-          <>
+          <div className="flex flex-col items-center justify-center gap-4 p-8">
             <motion.div 
               animate={controls}
               className="rounded-full bg-white/[0.08] p-4"
@@ -124,7 +126,7 @@ export function FileUpload({ file, onFileSelect }: FileUploadProps) {
                 PNG, JPG или WEBP (макс. 5MB)
               </p>
             </div>
-          </>
+          </div>
         )}
 
         <input

@@ -43,7 +43,7 @@ export function ResultsGallery({ results, onClose }: ResultsGalleryProps) {
           
           {/* Галерея */}
           <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-            {results.urls.map((url, i) => (
+            {Array.isArray(results.urls) && results.urls.map((url, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
